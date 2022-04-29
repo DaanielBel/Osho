@@ -71,7 +71,7 @@ async def lovecaculator(ctx, name1, name2):
 
 
 
-@slash.slash(name = "help", description= "Gives information on commands")
+@slash.slash(name = "help", description= "Gives information on commands", guild_ids="826173511693238332")
 async def help(ctx):
     embedVar = discord.Embed(title="Help", description="Prefix = **!!!**(Don't use)", color=0xFFB9F9)
     #embedVar.add_field(name=server_prefix1+"fetch", value="asks Osho to bring the ball", inline=False)
