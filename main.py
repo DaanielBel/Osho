@@ -146,7 +146,7 @@ async def balance(ctx):
         with open('balance.json', 'w') as f:
             json.dump(data, f, indent=4)
 
-@slash.slash(name="flipACoin", description = "Flip a coin for money (1 = heads, 2 = tails)")
+@slash.slash(name="flipACoin", description = "Flip a coin for money (1 = heads, 2 = tails)", guild_ids=[826173511693238332])
 async def flipACoin(ctx, money, side):
     with open('balance.json') as f:
         data = json.load(f)
@@ -178,7 +178,7 @@ async def flipACoin(ctx, money, side):
     with open('balance.json', 'w') as f:
         json.dump(data, f, indent=4)
 
-@slash.slash(name="daily", description = "Get free Osho-Coins every 24h!")
+@slash.slash(name="daily", description = "Get free Osho-Coins every 24h!", guild_ids=[826173511693238332])
 async def daily(ctx):
     with open('daily.json') as f:
         dataDaily = json.load(f)
