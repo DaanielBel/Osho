@@ -8,6 +8,8 @@ from discord.ext import commands,tasks
 from dotenv import load_dotenv
 from webserver import keep_alive
 
+MY_GUILD_ID = discord.Object(826173511693238332)
+
 client = commands.Bot(
     command_prefix = "!!!",
     intents = discord.Intents().all()
@@ -71,7 +73,7 @@ async def lovecaculator(ctx, name1, name2):
 
 
 
-@slash.slash(name = "help", description= "Gives information on commands", guild_ids="826173511693238332")
+@slash.slash(name = "help", description= "Gives information on commands", guild_ids= MY_GUILD_ID)
 async def help(ctx):
     embedVar = discord.Embed(title="Help", description="Prefix = **!!!**(Don't use)", color=0xFFB9F9)
     #embedVar.add_field(name=server_prefix1+"fetch", value="asks Osho to bring the ball", inline=False)
