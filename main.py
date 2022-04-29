@@ -178,13 +178,6 @@ async def flipACoin(ctx, money, side):
     with open('balance.json', 'w') as f:
         json.dump(data, f, indent=4)
 
-@slash.slash(name="black jack", description= "Play black jack for money against osho!", guild_ids=[826173511693238332])
-async def blackJack(ctx):
-    deck = list(itertools.product(range(1,14),[1, 2, 3, 4]))
-    random.shuffle(deck)
-    for i in range(4):
-        print(deck[i][0], "of", deck[i][1])
-
 @slash.slash(name="daily", description = "Get free Osho-Coins every 24h!")
 async def daily(ctx):
     with open('daily.json') as f:
