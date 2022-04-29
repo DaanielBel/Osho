@@ -1,0 +1,20 @@
+[tool.poetry]
+name = "osho"
+version = "0.1.0"
+description = ""
+authors = ["Your Name <you@example.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.8"
+discord = "^1.0.1"
+python-dotenv = "^0.16.0"
+praw = "^7.3.0"
+youtube_dl = "^2021.12.17"
+Flask = "^2.0.3"
+discord-py-slash-command = "^3.0.3"
+
+[tool.poetry.dev-dependencies]
+
+[build-system]
+requires = ["poetry>=0.12"]
+build-backend = "poetry.masonry.api"
