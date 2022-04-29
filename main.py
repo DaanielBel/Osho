@@ -1,14 +1,14 @@
 import discord
+import json
 import random
 import time
 import os
 import praw
+from datetime import date
 from discord_slash import SlashCommand
 from discord.ext import commands,tasks
 from dotenv import load_dotenv
 from webserver import keep_alive
-
-MY_GUILD_ID = discord.Object(826173511693238332)
 
 client = commands.Bot(
     command_prefix = "!!!",
@@ -21,6 +21,15 @@ reddit = praw.Reddit(
     client_secret='IYCN5815OaSdm4edsa44n3l3v2seFg',
     user_agent='Osho'
     )
+
+emojiDict = {
+    1: "<:Dice1:944309381900693524>",
+    2: "<:Dice2:944309652068392981>",
+    3: "<:Dice3:944310694453583882>",
+    4: "<:Dice4:944310694604591154>",
+    5: "<:Dice5:944310694654914580>",
+    6: "<:Dice6:944310694776545320>"
+}
 
 @client.event
 async def on_ready():
@@ -73,7 +82,7 @@ async def lovecaculator(ctx, name1, name2):
 
 
 
-@slash.slash(name = "help", description= "Gives information on commands", guild_ids= [826173511693238332])
+@slash.slash(name = "help", description= "Gives information on commands")
 async def help(ctx):
     embedVar = discord.Embed(title="Help", description="Prefix = **!!!**(Don't use)", color=0xFFB9F9)
     #embedVar.add_field(name=server_prefix1+"fetch", value="asks Osho to bring the ball", inline=False)
@@ -112,5 +121,111 @@ async def on_reaction_add(reaction, user):
             await reaction.message.edit(embed = embedVar)  
             await reaction.remove(user)
           
+@slash.slash(name = "rollTheDice", description = "Rolls The Dice")
+async def rollTheDice(ctx):
+    msg = await ctx.send("<a:RollTheDiceOsho:944319581294575667>")
+    num = random.randint(1,6)
+    time.sleep(1)
+    await msg.edit(content = emojiDict[num])
+
+@slash.slash(name="balance", description = "Returns the user's balance")
+async def balance(ctx):
+    with open('balance.json') as f:
+        data = json.load(f)
+    
+    flag = False
+    if str(ctx.author.id) in data:
+        await ctx.send(f"Your balance is: {data[str(ctx.author.id)]}")
+    else:
+        with open('balance.json', 'r') as f:
+            data = json.load(f)
+            data[str(ctx.author.id)] = 500
+
+            await ctx.send(f"Your balance is: {data[str(ctx.author.id)]}<:OshoCoin:944730109108158554> Osho Coins!")
+
+        with open('balance.json', 'w') as f:
+            json.dump(data, f, indent=4)
+
+@slash.slash(name="flipACoin", description = "Flip a coin for money (1 = heads, 2 = tails)")
+async def flipACoin(ctx, money, side):
+    with open('balance.json') as f:
+        data = json.load(f)
+
+    if int(money) > int(data[str(ctx.author.id)]):
+        await ctx.send("Not enough money in balance!")
+
+    rand = random.randint(1,2)
+    print(rand)
+    if rand == 1:
+        if int(side) == 1:
+            print("yes money")
+            data[str(ctx.author.id)] = int(data[str(ctx.author.id)]) + int(money)
+        else:
+            print("no money")
+            data[str(ctx.author.id)] = int(data[str(ctx.author.id)]) - int(money)
+
+        await ctx.send(f"Heads!\n Your new balance is: {data[str(ctx.author.id)]}<:OshoCoin:944730109108158554>")
+    else:
+        if int(side) == 2:
+            print("yes money")
+            data[str(ctx.author.id)] = int(data[str(ctx.author.id)]) + int(money)
+        else:
+            print("no money")
+            data[str(ctx.author.id)] = int(data[str(ctx.author.id)]) - int(money)
+
+        await ctx.send(f"Tails!\n Your new balance is: {data[str(ctx.author.id)]}<:OshoCoin:944730109108158554>")
+
+    with open('balance.json', 'w') as f:
+        json.dump(data, f, indent=4)
+
+@slash.slash(name="black jack", description= "Play black jack for money against osho!")
+async def blackJack(ctx):
+    deck = list(itertools.product(range(1,14),[1, 2, 3, 4]))
+    random.shuffle(deck)
+    for i in range(4):
+        print(deck[i][0], "of", deck[i][1])
+
+@slash.slash(name="daily", description = "Get free Osho-Coins every 24h!")
+async def daily(ctx):
+    with open('daily.json') as f:
+        dataDaily = json.load(f)
+
+    today = date.today()
+
+    if str(ctx.author.id) in dataDaily: #if user used Daily before
+        if dataDaily[str(ctx.author.id)] == today.strftime("%d/%m/%Y"):
+            await ctx.send("Already used daily today! try again tommorow")
+        else:
+            await ctx.send("Added 500<:OshoCoin:944730109108158554> to your balance!")
+            with open('balance.json', 'r') as f:
+                data = json.load(f)
+                data[str(ctx.author.id)] = data[str(ctx.author.id)] + 500
+
+            dataDaily[str(ctx.author.id)] = today.strftime("%d/%m/%Y") 
+            with open('daily.json', 'w') as f:
+                json.dump(dataDaily, f, indent=4) 
+            with open('balance.json', 'w') as f:
+                json.dump(data, f, indent=4)  
+ 
+    else:
+        await ctx.send("Added 500<:OshoCoin:944730109108158554> to your balance!")
+        with open('balance.json', 'r') as f:
+            data = json.load(f)
+            data[str(ctx.author.id)] = data[str(ctx.author.id)] + 500
+
+        dataDaily[str(ctx.author.id)] = today.strftime("%d/%m/%Y") 
+        with open('daily.json', 'w') as f:
+            json.dump(dataDaily, f, indent=4)    
+        with open('balance.json', 'w') as f:
+            json.dump(data, f, indent=4)
+
+@slash.slash(name="shop", description = "shop")
+async def shop(ctx):
+    embedVar = discord.Embed(title="Shop", description="To buy- /buy <item_id>", color=0xFFB9F9)
+    embedVar.add_field(name="Normal Create", value="Id = 1, Price = 10,000<:OshoCoin:944730109108158554>", inline=False)
+    embedVar.add_field(name="Epic Create", value="Id = 1, Price = 10,000<:OshoCoin:944730109108158554>", inline=False)
+    embedVar.add_field(name="Legendary create", value="Id = 1, Price = 10,000<:OshoCoin:944730109108158554>", inline=False)
+    await ctx.send(embed = embedVar)   
+    
 #keep_alive()
 client.run(os.environ['TOKEN'])
