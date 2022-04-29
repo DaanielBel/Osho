@@ -37,7 +37,7 @@ async def on_ready():
     activity_string = '{} servers.'.format(len(client.guilds))
     await client.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name=activity_string))
 
-@slash.slash(name="memes", description="Sends a meme from r/memes")
+@slash.slash(name="memes", description="Sends a meme from r/memes", guild_ids=[826173511693238332])
 async def memeMeUp(ctx):
     memes_submissions = reddit.subreddit('memes').hot()
     post_to_pick = random.randint(1, 10)
@@ -49,11 +49,11 @@ async def memeMeUp(ctx):
     embed.set_footer(text="A post from the subreddit r/memes")
     await ctx.send(embed=embed)
 
-@slash.slash(name = "ping", description = "Sends Osho's ping")
+@slash.slash(name = "ping", description = "Sends Osho's ping", guild_ids=[826173511693238332])
 async def ping(ctx):
     await ctx.send(f"My ping is - {round(client.latency * 1000)}ms")
 
-@slash.slash(name='lovecaculator', description="caculates the amout of love between two people")    
+@slash.slash(name='lovecaculator', description="caculates the amout of love between two people", guild_ids=[826173511693238332])    
 async def lovecaculator(ctx, name1, name2):
     embed=discord.Embed(title="Love caculator", description="Caculating..", color=0xfe9fcf)
     embed.set_author(name="Osho", icon_url="https://cdn.discordapp.com/avatars/826172867573579786/49fb1a7583bc93e37a20b83798176d14.png?size=128%22")
@@ -82,7 +82,7 @@ async def lovecaculator(ctx, name1, name2):
 
 
 
-@slash.slash(name = "help", description= "Gives information on commands")
+@slash.slash(name = "help", description= "Gives information on commands", guild_ids=[826173511693238332])
 async def help(ctx):
     embedVar = discord.Embed(title="Help", description="Prefix = **!!!**(Don't use)", color=0xFFB9F9)
     #embedVar.add_field(name=server_prefix1+"fetch", value="asks Osho to bring the ball", inline=False)
@@ -121,14 +121,14 @@ async def on_reaction_add(reaction, user):
             await reaction.message.edit(embed = embedVar)  
             await reaction.remove(user)
           
-@slash.slash(name = "rollTheDice", description = "Rolls The Dice")
+@slash.slash(name = "rollTheDice", description = "Rolls The Dice", guild_ids=[826173511693238332])
 async def rollTheDice(ctx):
-    msg = await ctx.send("<a:RollTheDiceOsho:944319581294575667>")
+    msg = await ctx.send("<a:RollTheDiceOsho:944319581294575667>", guild_ids=[826173511693238332])
     num = random.randint(1,6)
     time.sleep(1)
     await msg.edit(content = emojiDict[num])
 
-@slash.slash(name="balance", description = "Returns the user's balance")
+@slash.slash(name="balance", description = "Returns the user's balance", guild_ids=[826173511693238332])
 async def balance(ctx):
     with open('balance.json') as f:
         data = json.load(f)
@@ -178,7 +178,7 @@ async def flipACoin(ctx, money, side):
     with open('balance.json', 'w') as f:
         json.dump(data, f, indent=4)
 
-@slash.slash(name="black jack", description= "Play black jack for money against osho!")
+@slash.slash(name="black jack", description= "Play black jack for money against osho!", guild_ids=[826173511693238332])
 async def blackJack(ctx):
     deck = list(itertools.product(range(1,14),[1, 2, 3, 4]))
     random.shuffle(deck)
@@ -219,7 +219,7 @@ async def daily(ctx):
         with open('balance.json', 'w') as f:
             json.dump(data, f, indent=4)
 
-@slash.slash(name="shop", description = "shop")
+@slash.slash(name="shop", description = "shop", guild_ids=[826173511693238332])
 async def shop(ctx):
     embedVar = discord.Embed(title="Shop", description="To buy- /buy <item_id>", color=0xFFB9F9)
     embedVar.add_field(name="Normal Create", value="Id = 1, Price = 10,000<:OshoCoin:944730109108158554>", inline=False)
