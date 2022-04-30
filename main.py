@@ -1,11 +1,15 @@
+from typing_extensions import Required
+from venv import create
 import discord
 import json
 import random
 import time
 import os
+from numpy import require
 import praw
 from datetime import date
-from discord_slash import SlashCommand
+from discord_slash import SlashCommand, SlashContext
+from discord_slash.utils.manage_commands import create_choice, create_option
 from discord.ext import commands,tasks
 from dotenv import load_dotenv
 from webserver import keep_alive
@@ -146,10 +150,39 @@ async def balance(ctx):
         with open('balance.json', 'w') as f:
             json.dump(data, f, indent=4)
 
-@slash.slash(name="flipACoin", description = "Flip a coin for money (1 = heads, 2 = tails)", guild_ids=[826173511693238332])
-async def flipACoin(ctx, money, side):
+@slash.slash(
+    name="flipACoin", description = "Flip a coin for money", guild_ids=[826173511693238332],
+    options=[
+        create_option(
+            name = "money",
+            description = "How much money you want to bet on (Insert 'all' for all-in)",
+            required = True,
+            option_type = 3
+        ),
+        create_option(
+            name = "side",
+            description = "Which side you want to bet on",
+            required = True,
+            option_type = 4,
+            choices = [
+                create_choice(
+                        name = "Heads",
+                        value = 1
+                ),
+                create_choice(
+                    name = "Tails",
+                    value = 2
+                )
+            ]
+        )
+    ]
+)
+async def flipACoin(ctx:SlashContext, money, side:int):
     with open('balance.json') as f:
         data = json.load(f)
+
+    if money == "all":
+        money = int(data[str(ctx.author.id)]);
 
     if int(money) > int(data[str(ctx.author.id)]):
         await ctx.send("Not enough money in balance!")
@@ -158,10 +191,8 @@ async def flipACoin(ctx, money, side):
     print(rand)
     if rand == 1:
         if int(side) == 1:
-            print("yes money")
             data[str(ctx.author.id)] = int(data[str(ctx.author.id)]) + int(money)
         else:
-            print("no money")
             data[str(ctx.author.id)] = int(data[str(ctx.author.id)]) - int(money)
 
         await ctx.send(f"Heads!\n Your new balance is: {data[str(ctx.author.id)]}<:OshoCoin:944730109108158554>")
